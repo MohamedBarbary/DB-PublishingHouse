@@ -1,0 +1,227 @@
+  create table phouse (
+ph_id varchar2(3) primary key,
+name varchar2(20) not null,
+city varchar2(20) not null,
+region varchar2(20),
+email varchar2(30) not null
+);
+
+create table phouse_ph
+(
+  phone varchar2(11),
+  ph_id varchar2(3),
+  primary key (phone, ph_id),
+    foreign key (ph_id)
+    references phouse (ph_id)
+);
+
+
+create table paper_type
+(
+ph_id varchar2(3),
+type varchar2(20) not null,
+cost number(8,2) not null,
+primary key (ph_id, type),
+foreign key (ph_id)
+references phouse (ph_id)
+);
+
+create table outlet
+(
+  bo_id varchar2(3) primary key,
+  email varchar2(30) not null,
+  city varchar2(20) not null,
+  region varchar2(20),
+  name varchar2(20) not null
+);
+
+create table outlet_ph
+(
+  phone varchar2(11) ,
+  bo_id varchar2(3) ,
+   primary key (phone, bo_id),
+    foreign key (bo_id)
+    references outlet (bo_id)
+);
+
+create table distributor
+(
+  distributor_id varchar2(3) primary key ,
+  name varchar2(20) not null,
+  city varchar2(20) not null,
+  region varchar2(20)
+);
+
+
+create table distributor_ph
+(
+  phone varchar2(11) ,
+  distributor_id varchar2(3) ,
+   primary key (phone, distributor_id),
+    foreign key (distributor_id)
+    references distributor(distributor_id)
+);
+
+create table department (
+    dept_id varchar2(3) primary key,
+    name varchar2(20) not null ,
+    manage_id varchar2(3) 
+);
+
+
+create table employee
+(
+  emp_id varchar2(3) primary key ,
+  first_name varchar2(20) not null, 
+last_name varchar2(20) not null,
+email varchar2(30) not null,
+  city varchar2(20) not null,
+  region varchar2(20),
+  salary number(8,2),
+  dept_id varchar2(3) ,
+  sup_emp_id varchar2(3) ,
+  foreign key (dept_id)  references department(dept_id),
+    foreign key (sup_emp_id)   references  employee(emp_id)
+);
+
+create table employee_ph
+(
+  phone varchar2(11) ,
+  emp_id varchar2(3) ,
+  primary key(phone , emp_id ),
+    foreign key (emp_id)
+    references employee (emp_id)
+);
+ 
+/// add foreign key 
+alter table department modify manage_id not null varchar2(3) references  employee(emp_id) ;
+
+
+create table auther (
+auther_id varchar2(3) ,
+first_name varchar2(20) not null ,
+last_name varchar2(20) not null ,
+email varchar2(30) not null ,
+city varchar2(20) not null,
+region varchar2(20),
+primary key (auther_id)
+);
+
+
+create table auther_phone (
+    phone varchar2(11) ,
+    auther_id varchar2(3) ,
+    primary key (phone  , auther_id ) ,
+    foreign key (auther_id) references auther(auther_id ) 
+);
+
+
+create table book
+(
+book_id varchar2(4) primary key,
+book_title varchar2(30) not null,
+contract_id varchar2(3) 
+);
+
+
+create table contract (
+    contract_id varchar2(3) primary key,
+    terms varchar2(20) not null,
+    c_date date not null,
+    dept_id varchar2(3) not null  references department(dept_id),
+    book_id varchar2(4) references book(book_id) 
+);
+
+// alter table book add foriegn key 
+alter table book modify contract_id varchar2(3) references contract(contract_id) ;
+
+
+create table eddition
+(
+ed_number  varchar2(1) primary key,
+ed_copies number(6) not null ,
+price_for_copy number(8,2) not null ,
+publishing_data varchar2(20) not null ,
+ed_pages number(4) not null,
+paper_type varchar2(20) not null ,
+book_id varchar2(20) not null ,
+ph_id varchar2(3) not null,
+foreign key  (book_id)
+references  book (book_id),
+foreign key (ph_id)
+references  phouse (ph_id)
+);
+
+
+
+create table  edition_editors (
+  ed_number varchar2(1) ,
+  emp_id varchar2(3) ,
+ primary key (ed_number, emp_id),
+foreign key (ed_number)
+    references  eddition (ed_number),
+  foreign key (emp_id)
+    references  employee (emp_id)
+);
+
+
+
+create table book_marker (
+  book_id varchar2(4) ,
+  emp_id varchar2(3) ,
+   primary key  (book_id, emp_id),
+  foreign key (book_id) references  book (book_id),
+  foreign key (emp_id) references  employee (emp_id)
+);
+
+
+
+create table o_rder
+(
+order_id varchar2(10) primary key ,
+order_Date date not null,
+dept_id varchar2(3) not null,
+bo_id varchar2(3) not null,
+distributer_id varchar2(3) not null,
+foreign key  (dept_id)
+references  department (dept_id),
+foreign key  (bo_id)
+references  book,
+foreign key  (distributer_id)
+references  distributor
+);
+
+
+
+create table order_book (
+    order_id varchar2(10) ,
+    book_id varchar2(4) ,
+    copies_no number(5),
+    primary key (order_id, book_id),
+    foreign key (order_id) references  o_rder(order_id),
+    foreign key (book_id) references  book(book_id)
+);
+
+
+
+
+
+create table book_category (
+    category varchar2(20) ,
+    book_id varchar2(4) ,
+    primary key (category, book_id),
+   foreign key (book_id) references  book(book_id)
+);
+
+
+
+create table book_auther (
+    book_id varchar2(4) ,
+    auther_id varchar2(3) ,
+    primary key (book_id, auther_id),
+   foreign key (book_id) references book(book_id),
+    foreign key (auther_id) references  auther (auther_id )
+);
+
+
+
